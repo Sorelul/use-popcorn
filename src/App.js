@@ -47,16 +47,16 @@ const average = (arr) => arr.reduce((acc, cur, i, arr) => acc + cur / arr.length
 const KEY = process.env.REACT_APP_OMDBAPI_KEY;
 
 export default function App() {
+    const [query, setQuery] = useState("");
     const [movies, setMovies] = useState([]);
     const [watched, setWatched] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const query = "matrix";
-
     async function fetchMovies() {
         try {
             setIsLoading(true);
+            setError("");
             const res = await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`);
 
             if (!res.ok) {
@@ -79,14 +79,19 @@ export default function App() {
     }
 
     useEffect(() => {
+        if (query.length < 3) {
+            setMovies([]);
+            setError("");
+            return;
+        }
         fetchMovies();
         return () => console.log("Cleanup");
-    }, []);
+    }, [query]);
 
     return (
         <>
             <Navbar>
-                <SearchBar />
+                <SearchBar query={query} setQuery={setQuery} />
                 <NumResults movies={movies} />
             </Navbar>
             <MainContent>
@@ -100,7 +105,6 @@ export default function App() {
                     <WatchedSummary watched={watched} />
                     <WatchedMoviesList watched={watched} />
                 </Box>
-                {/* <WatchedBox /> */}
             </MainContent>
         </>
     );
@@ -132,9 +136,7 @@ function NumResults({ movies }) {
     );
 }
 
-function SearchBar() {
-    const [query, setQuery] = useState("");
-
+function SearchBar({ query, setQuery }) {
     return (
         <input
             className="search"
