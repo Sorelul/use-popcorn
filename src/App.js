@@ -249,6 +249,7 @@ function MovieDetails({ selectedId, onMovieClose, onAddWatched, watched }) {
     const isWatched = watched.some((movie) => movie.imdbID === selectedId);
     const watchedUserRating = watched.find((movie) => movie.imdbID === selectedId)?.userRating;
 
+    //* Fetch Effect
     useEffect(
         function () {
             async function getMovieDetails() {
@@ -263,6 +264,22 @@ function MovieDetails({ selectedId, onMovieClose, onAddWatched, watched }) {
         [selectedId]
     );
 
+    //* Escape button Effect
+    useEffect(() => {
+        function callback(e) {
+            if (e.code === "Escape") {
+                onMovieClose();
+            }
+        }
+
+        document.addEventListener("keydown", callback);
+
+        return function () {
+            document.removeEventListener("keydown", callback);
+        };
+    }, [onMovieClose]);
+
+    //* Title Effect
     useEffect(() => {
         if (!title) return;
         document.title = `Movie | ${title}`;
