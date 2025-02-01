@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
 import { useLocalStorageState } from "./useLocalStorageState";
+import { useKey } from "./useKey";
 
 const KEY = process.env.REACT_APP_OMDBAPI_KEY;
 
@@ -96,18 +97,12 @@ function NumResults({ movies }) {
 function SearchBar({ query, setQuery }) {
     const inputEl = useRef(null);
 
-    useEffect(() => {
-        function callback(e) {
-            if (document.activeElement === inputEl.current) return;
-
-            if (e.code === "Enter") {
-                inputEl.current.focus();
-                setQuery("");
-            }
-        }
-        document.addEventListener("keydown", callback);
-        return () => document.addEventListener("keydown", callback);
-    }, [setQuery]);
+    //* Enter button hook
+    useKey("Enter", () => {
+        if (document.activeElement === inputEl.current) return;
+        inputEl.current.focus();
+        setQuery("");
+    });
 
     return (
         <input
@@ -203,20 +198,8 @@ function MovieDetails({ selectedId, onMovieClose, onAddWatched, watched }) {
         [selectedId]
     );
 
-    //* Escape button Effect
-    useEffect(() => {
-        function callback(e) {
-            if (e.code === "Escape") {
-                onMovieClose();
-            }
-        }
-
-        document.addEventListener("keydown", callback);
-
-        return function () {
-            document.removeEventListener("keydown", callback);
-        };
-    }, [onMovieClose]);
+    //* Escape button hook
+    useKey("Escape", onMovieClose);
 
     //* Title Effect
     useEffect(() => {
