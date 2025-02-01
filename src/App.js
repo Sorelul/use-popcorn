@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
+import { useLocalStorageState } from "./useLocalStorageState";
 
 const KEY = process.env.REACT_APP_OMDBAPI_KEY;
 
@@ -10,11 +11,7 @@ export default function App() {
     const [query, setQuery] = useState("Solo leveling");
     const [selectedId, setSelectedId] = useState(null);
     const { movies, isLoading, error } = useMovies(query);
-
-    const [watched, setWatched] = useState(function () {
-        const storedValue = localStorage.getItem("watched");
-        return storedValue ? JSON.parse(storedValue) : [];
-    });
+    const [watched, setWatched] = useLocalStorageState([], "watched");
 
     function handleMovieSelect(id) {
         if (selectedId === id) {
@@ -36,10 +33,6 @@ export default function App() {
     function handleDeleteWatched(id) {
         setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
     }
-
-    useEffect(() => {
-        localStorage.setItem("watched", JSON.stringify(watched));
-    }, [watched]);
 
     return (
         <>
