@@ -16,7 +16,7 @@ usePopcorn is a React application that allows users to search for movies using t
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/yourusername/usepopcorn.git
+    git clone https://github.com/Sorelul/usepopcorn.git
     cd usepopcorn
     ```
 
